@@ -1,0 +1,7 @@
+node_modules/
+backend/node_modules/
+backend/data.sqlite
+backend/test_campaign.json
+backend/test_mission.json
+backend/test_missions_list.json
+.DS_Store

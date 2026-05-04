@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Modulo 3 - CRUDs</title>
+    <style>
+      body{font-family:Arial,Helvetica,sans-serif;padding:20px}
+      .col{float:left;width:48%;margin-right:2%}
+      .card{border:1px solid #ddd;padding:12px;margin-bottom:12px}
+      input,textarea,select{width:100%;padding:6px;margin:6px 0}
+      button{padding:8px 12px}
+      .clear{clear:both}
+    </style>
+  </head>
+  <body>
+    <h1>Avance Módulo 3 — CRUDs</h1>
+    <div class="col">
+      <div class="card">
+        <h3>Crear Campaña</h3>
+        <input id="camp-nombre" placeholder="Nombre" />
+        <textarea id="camp-desc" placeholder="Descripción"></textarea>
+        <input id="camp-ambient" placeholder="Ambientación" />
+        <select id="camp-estado"><option value="activa">activa</option><option value="pausada">pausada</option><option value="finalizada">finalizada</option></select>
+        <input id="camp-narrador" placeholder="Narrador (id)" />
+        <input id="camp-max" placeholder="Max jugadores" type="number" />
+        <input id="camp-sistema" placeholder="Sistema de reglas" />
+        <button id="btn-create-camp">Crear Campaña</button>
+      </div>
+
+      <div class="card">
+        <h3>Crear Misión (para campaña seleccionada)</h3>
+        <input id="mission-campaign-id" placeholder="Campaign ID" />
+        <input id="mission-title" placeholder="Título" />
+        <textarea id="mission-desc" placeholder="Descripción"></textarea>
+        <input id="mission-orden" placeholder="Orden (número)" type="number" />
+        <input id="mission-cap" placeholder="Capítulo" />
+        <select id="mission-estado"><option value="pendiente">pendiente</option><option value="en_progreso">en_progreso</option><option value="completada">completada</option></select>
+        <button id="btn-create-mission">Crear Misión</button>
+      </div>
+    </div>
+
+    <div class="col">
+      <div class="card">
+        <h3>Lista de Campañas</h3>
+        <div id="campaigns-list"></div>
+        <button id="btn-refresh-camps">Actualizar lista</button>
+      </div>
+
+      <div class="card">
+        <h3>Misiones de Campaña</h3>
+        <input id="list-missions-campaign" placeholder="Campaign ID" />
+        <button id="btn-list-missions">Listar Misiones</button>
+        <div id="missions-list"></div>
+      </div>
+    </div>
+
+    <div class="clear"></div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
