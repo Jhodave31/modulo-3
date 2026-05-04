@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Campaign Forge — Presentación</title>
+  <style>
+    html{scroll-behavior:smooth}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Arial;background:#0b1220;color:#f8f3e8}
+    .deck{max-width:1100px;margin:0 auto;padding:24px 18px 90px}
+    .slide{min-height:100vh;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;padding:56px 28px;border-bottom:1px solid rgba(241,207,132,.14)}
+    .slide:last-child{border-bottom:0}
+    h1{font-size:2.6rem;margin:0 0 .6rem;color:#f1cf84}
+    h2{font-size:1.4rem;margin:.2rem 0 .8rem;color:#fff2cf}
+    p{color:#c8bfae;font-size:1.05rem;line-height:1.5}
+    ul{color:#c8bfae}
+    .controls{position:fixed;left:12px;bottom:12px;display:flex;gap:8px;align-items:center;color:#f8f3e8;opacity:.92;z-index:10}
+    .controls button{border:1px solid rgba(241,207,132,.35);background:rgba(10,16,24,.9);color:#f8f3e8;border-radius:999px;padding:8px 12px;cursor:pointer}
+    .controls button:hover{background:rgba(241,207,132,.14)}
+    .counter{padding:8px 10px;border:1px solid rgba(241,207,132,.25);border-radius:999px;background:rgba(10,16,24,.72)}
+    .hint{position:fixed;right:12px;bottom:12px;color:#fff8e7;opacity:.8}
+    .meta{font-size:.9rem;color:#cbb78a;margin-top:12px}
+  </style>
+</head>
+<body>
+  <div class="deck" id="deck">
+    <section class="slide" id="s0">
+      <h1>Campaign Forge</h1>
+      <h2>Mini-app para administrar Campañas y Misiones</h2>
+      <p>CRUD completo para campañas y misiones. Backend: Node/Express + SQLite. Frontend: HTML/Vanilla JS temático para demo.</p>
+      <div class="meta">Repositorio: https://github.com/Jhodave31/modulo-3</div>
+    </section>
+
+    <section class="slide" id="s1">
+      <h2>Arquitectura y componentes</h2>
+      <p>
+        La app está dividida en 3 capas muy simples: el navegador muestra la interfaz,
+        el servidor recibe las peticiones y la base de datos guarda la información.
+      </p>
+      <ul>
+        <li><strong>Frontend:</strong> `frontend/index.html` y `frontend/app.js`. Aquí están los formularios, la lista de campañas/misiones y los mensajes de confirmación.</li>
+        <li><strong>Backend:</strong> `backend/index.js`. Expone la API REST y aplica las reglas para crear, editar, listar y eliminar.</li>
+        <li><strong>Base de datos:</strong> `backend/db.js` con SQLite. Guarda campañas y misiones en tablas relacionadas.</li>
+      </ul>
+      <p>
+        <strong>Flujo:</strong> el usuario llena un formulario → el frontend envía una petición HTTP →
+        el backend procesa la solicitud → SQLite guarda el cambio → el frontend actualiza la pantalla y muestra un toast.
+      </p>
+      <p>
+        <strong>Por qué este stack:</strong> Node/Express facilita la API, SQLite evita una configuración pesada y el frontend en JavaScript permite una demo rápida y entendible.
+      </p>
+    </section>
+
+    <section class="slide" id="s2">
+      <h2>Demo (3–5 minutos)</h2>
+      <ol>
+        <li>Arrancar servidor: <code>node backend/index.js</code></li>
+        <li>Abrir: <a href="http://localhost:3000" style="color:#f1cf84">http://localhost:3000</a></li>
+        <li>Crear campaña → Mostrar toast y ID</li>
+        <li>Editar campaña (formulario completo) → Guardar → toast</li>
+        <li>Crear misión, listar misiones, editar y eliminar → toast</li>
+      </ol>
+    </section>
+
+    <section class="slide" id="s3">
+      <h2>Próximos pasos y mejoras</h2>
+      <ul>
+        <li>Autenticación y permisos</li>
+        <li>Migrar a PostgreSQL para producción</li>
+        <li>Tests E2E y CI</li>
+        <li>Mejorar UI (modales, validaciones)</li>
+      </ul>
+      <p class="meta">Notas: speaker script y archivos de evidencia en la carpeta <strong>presentation</strong>.</p>
+    </section>
+  </div>
+
+  <div class="controls">
+    <button id="prevBtn" type="button">Anterior</button>
+    <button id="nextBtn" type="button">Siguiente</button>
+    <span class="counter" id="counter">1 / 4</span>
+  </div>
+  <div class="hint">Usa las flechas o los botones para navegar</div>
+
+  <script>
+    const deck = document.getElementById('deck');
+    let idx = 0;
+    const slides = Array.from(deck.querySelectorAll('.slide'));
+    const counter = document.getElementById('counter');
+    function show(i){
+      idx = Math.max(0, Math.min(slides.length - 1, i));
+      slides[idx].scrollIntoView({behavior:'smooth', block:'start'});
+      counter.textContent = `${idx+1} / ${slides.length}`;
+    }
+    document.getElementById('prevBtn').addEventListener('click', ()=> show(idx-1));
+    document.getElementById('nextBtn').addEventListener('click', ()=> show(idx+1));
+    document.addEventListener('keydown', e=>{
+      if(e.key==='ArrowRight') show(idx+1);
+      if(e.key==='ArrowLeft') show(idx-1);
+      if(e.key==='Escape') show(0);
+    });
+    // small touch support
+    let startX = null;
+    document.addEventListener('touchstart', e=> startX = e.touches[0].clientX, {passive:true});
+    document.addEventListener('touchend', e=>{ if(startX==null) return; const dx = e.changedTouches[0].clientX - startX; if(dx< -40) show(idx+1); if(dx>40) show(idx-1); startX=null; }, {passive:true});
+    window.addEventListener('scroll', () => {
+      const midpoint = window.scrollY + window.innerHeight / 2;
+      let best = 0;
+      let bestDist = Infinity;
+      slides.forEach((slide, slideIndex) => {
+        const top = slide.offsetTop;
+        const dist = Math.abs(top - midpoint);
+        if (dist < bestDist) { bestDist = dist; best = slideIndex; }
+      });
+      idx = best;
+      counter.textContent = `${idx+1} / ${slides.length}`;
+    }, {passive:true});
+    show(0);
+  </script>
+</body>
+</html>

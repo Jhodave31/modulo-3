@@ -3,59 +3,415 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Modulo 3 - CRUDs</title>
+    <title>Modulo 3 - Campaign Forge</title>
     <style>
-      body{font-family:Arial,Helvetica,sans-serif;padding:20px}
-      .col{float:left;width:48%;margin-right:2%}
-      .card{border:1px solid #ddd;padding:12px;margin-bottom:12px}
-      input,textarea,select{width:100%;padding:6px;margin:6px 0}
-      button{padding:8px 12px}
-      .clear{clear:both}
+      :root {
+        --bg: #0f1720;
+        --panel: rgba(13, 24, 34, 0.86);
+        --panel-strong: rgba(8, 15, 22, 0.95);
+        --text: #f8f3e8;
+        --muted: #c8bfae;
+        --gold: #d6a64f;
+        --gold-2: #f1cf84;
+        --emerald: #4ec08f;
+        --crimson: #d96b6b;
+        --line: rgba(255,255,255,0.12);
+        --shadow: 0 18px 40px rgba(0,0,0,.35);
+      }
+
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: Georgia, 'Times New Roman', serif;
+        color: var(--text);
+        background:
+          radial-gradient(circle at top, rgba(214,166,79,.18), transparent 30%),
+          radial-gradient(circle at bottom right, rgba(78,192,143,.14), transparent 30%),
+          linear-gradient(160deg, #182634 0%, #0f1720 40%, #090d13 100%);
+      }
+
+      .page {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 28px 20px 36px;
+      }
+
+      .hero {
+        position: relative;
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 26px;
+        background: linear-gradient(135deg, rgba(25,39,54,.92), rgba(10,16,24,.96));
+        box-shadow: var(--shadow);
+        padding: 28px;
+        margin-bottom: 18px;
+      }
+
+      .hero::before,
+      .hero::after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        pointer-events: none;
+      }
+
+      .hero::before {
+        width: 220px;
+        height: 220px;
+        right: -55px;
+        top: -60px;
+        background: radial-gradient(circle, rgba(214,166,79,.22), transparent 68%);
+      }
+
+      .hero::after {
+        width: 140px;
+        height: 140px;
+        left: 16px;
+        bottom: -44px;
+        background: radial-gradient(circle, rgba(78,192,143,.18), transparent 70%);
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border: 1px solid rgba(214,166,79,.35);
+        background: rgba(214,166,79,.12);
+        color: var(--gold-2);
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-size: 12px;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 14px 0 10px;
+        font-size: clamp(2.4rem, 4vw, 4.5rem);
+        line-height: .95;
+        letter-spacing: .02em;
+      }
+
+      .subtitle {
+        max-width: 760px;
+        color: var(--muted);
+        font-size: 1.02rem;
+        line-height: 1.65;
+        margin: 0;
+      }
+
+      .hero-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 20px;
+      }
+
+      .stat {
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255,255,255,.04);
+        padding: 14px 16px;
+      }
+
+      .stat span {
+        display: block;
+        color: var(--muted);
+        font-size: .78rem;
+        text-transform: uppercase;
+        letter-spacing: .12em;
+        margin-bottom: 6px;
+      }
+
+      .stat strong {
+        font-size: 1.2rem;
+        color: #fff8e7;
+      }
+
+      .layout {
+        display: grid;
+        grid-template-columns: 1.05fr .95fr;
+        gap: 18px;
+      }
+
+      .column {
+        display: grid;
+        gap: 18px;
+      }
+
+      .card {
+        border: 1px solid var(--line);
+        border-radius: 22px;
+        padding: 18px;
+        background: linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+        box-shadow: var(--shadow);
+        backdrop-filter: blur(8px);
+      }
+
+      .card h3 {
+        margin: 0 0 14px;
+        font-family: 'Trebuchet MS', sans-serif;
+        letter-spacing: .03em;
+        font-size: 1.1rem;
+        text-transform: uppercase;
+        color: #fff2cf;
+      }
+
+      .card p.helper {
+        margin: -6px 0 14px;
+        color: var(--muted);
+        font-size: .92rem;
+        line-height: 1.5;
+      }
+
+      .field {
+        display: grid;
+        gap: 6px;
+        margin-bottom: 12px;
+      }
+
+      .field label {
+        font-size: .82rem;
+        color: var(--gold-2);
+        text-transform: uppercase;
+        letter-spacing: .08em;
+      }
+
+      input, textarea, select {
+        width: 100%;
+        border: 1px solid rgba(214,166,79,.28);
+        border-radius: 14px;
+        background: rgba(7, 12, 18, .78);
+        color: var(--text);
+        padding: 12px 14px;
+        font: inherit;
+        outline: none;
+        transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+      }
+
+      input::placeholder, textarea::placeholder { color: rgba(248,243,232,.5); }
+      input:focus, textarea:focus, select:focus {
+        border-color: rgba(214,166,79,.75);
+        box-shadow: 0 0 0 4px rgba(214,166,79,.12);
+        transform: translateY(-1px);
+      }
+
+      textarea { min-height: 106px; resize: vertical; }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+      }
+
+      button {
+        border: 0;
+        border-radius: 14px;
+        padding: 12px 16px;
+        cursor: pointer;
+        color: #22170a;
+        background: linear-gradient(180deg, #f6d78d, #cf9d42);
+        font-family: 'Trebuchet MS', sans-serif;
+        font-weight: 700;
+        letter-spacing: .03em;
+        box-shadow: 0 10px 24px rgba(207,157,66,.25);
+        transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 14px 28px rgba(207,157,66,.35);
+        filter: brightness(1.03);
+      }
+
+      button.secondary {
+        background: linear-gradient(180deg, rgba(78,192,143,.92), rgba(31,135,93,.95));
+        color: #062010;
+      }
+
+      .list-wrap {
+        display: grid;
+        gap: 10px;
+      }
+
+      .entry {
+        border: 1px solid rgba(255,255,255,.08);
+        border-radius: 18px;
+        background: rgba(0,0,0,.18);
+        padding: 14px;
+      }
+
+      .entry-top {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+        margin-bottom: 8px;
+      }
+
+      .entry-title {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .entry-title b {
+        font-size: 1.03rem;
+        color: #fff9eb;
+      }
+
+      .badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        font-size: .75rem;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        border: 1px solid transparent;
+      }
+
+      .badge.activa, .badge.pendiente, .badge.en_progreso, .badge.completada {
+        background: rgba(255,255,255,.06);
+      }
+
+      .badge.activa { color: #88f0b9; border-color: rgba(136,240,185,.25); }
+      .badge.pausada { color: #f1cf84; border-color: rgba(241,207,132,.25); }
+      .badge.finalizada { color: #ff9f9f; border-color: rgba(255,159,159,.25); }
+      .badge.pendiente { color: #f1cf84; border-color: rgba(241,207,132,.25); }
+      .badge.en_progreso { color: #8ed8ff; border-color: rgba(142,216,255,.25); }
+      .badge.completada { color: #88f0b9; border-color: rgba(136,240,185,.25); }
+
+      .entry-meta {
+        color: var(--muted);
+        line-height: 1.5;
+        font-size: .95rem;
+      }
+
+      .entry-actions {
+        display: flex;
+        gap: 8px;
+        margin-top: 12px;
+      }
+
+      .entry-actions button {
+        padding: 9px 12px;
+        border-radius: 12px;
+        font-size: .82rem;
+      }
+
+      .entry-actions button.warn {
+        background: linear-gradient(180deg, #ff9a9a, #c85b5b);
+        color: #2b0606;
+      }
+
+      .footer-note {
+        margin-top: 14px;
+        color: rgba(248,243,232,.65);
+        font-size: .9rem;
+      }
+
+      .toast {
+        position: fixed;
+        right: 18px;
+        bottom: 18px;
+        min-width: 240px;
+        max-width: 360px;
+        padding: 14px 16px;
+        border-radius: 16px;
+        color: #fef8ec;
+        background: rgba(6, 11, 16, .92);
+        border: 1px solid rgba(241,207,132,.25);
+        box-shadow: var(--shadow);
+        transform: translateY(16px);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity .2s ease, transform .2s ease;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .toast strong {
+        display: block;
+        margin-bottom: 4px;
+        color: var(--gold-2);
+      }
+
+      @media (max-width: 1024px) {
+        .layout { grid-template-columns: 1fr; }
+        .hero-grid { grid-template-columns: 1fr; }
+      }
     </style>
   </head>
   <body>
-    <h1>Avance Módulo 3 — CRUDs</h1>
-    <div class="col">
-      <div class="card">
-        <h3>Crear Campaña</h3>
-        <input id="camp-nombre" placeholder="Nombre" />
-        <textarea id="camp-desc" placeholder="Descripción"></textarea>
-        <input id="camp-ambient" placeholder="Ambientación" />
-        <select id="camp-estado"><option value="activa">activa</option><option value="pausada">pausada</option><option value="finalizada">finalizada</option></select>
-        <input id="camp-narrador" placeholder="Narrador (id)" />
-        <input id="camp-max" placeholder="Max jugadores" type="number" />
-        <input id="camp-sistema" placeholder="Sistema de reglas" />
-        <button id="btn-create-camp">Crear Campaña</button>
-      </div>
+    <div class="page">
+      <section class="hero">
+        <span class="eyebrow">Plataforma de rol · Módulo 3</span>
+        <h1>Campaign Forge</h1>
+        <p class="subtitle">
+          Un cuaderno de campaña con estética de fantasía oscura para administrar campañas y misiones como si fueras el narrador del reino.
+        </p>
+        <div class="hero-grid">
+          <div class="stat"><span>Estado del reino</span><strong>Activo y listo para jugar</strong></div>
+          <div class="stat"><span>Campañas</span><strong id="stat-campaigns">0 campañas registradas</strong></div>
+          <div class="stat"><span>Misiones</span><strong id="stat-missions">0 misiones registradas</strong></div>
+        </div>
+      </section>
 
-      <div class="card">
-        <h3>Crear Misión (para campaña seleccionada)</h3>
-        <input id="mission-campaign-id" placeholder="Campaign ID" />
-        <input id="mission-title" placeholder="Título" />
-        <textarea id="mission-desc" placeholder="Descripción"></textarea>
-        <input id="mission-orden" placeholder="Orden (número)" type="number" />
-        <input id="mission-cap" placeholder="Capítulo" />
-        <select id="mission-estado"><option value="pendiente">pendiente</option><option value="en_progreso">en_progreso</option><option value="completada">completada</option></select>
-        <button id="btn-create-mission">Crear Misión</button>
-      </div>
+      <section class="layout">
+        <div class="column">
+          <div class="card">
+            <h3>Forjar campaña</h3>
+            <p class="helper">Define la ambientación, el narrador y el sistema de reglas de tu aventura.</p>
+            <div class="field"><label for="camp-nombre">Nombre</label><input id="camp-nombre" placeholder="Crónicas del Bosque Sombrío" /></div>
+            <div class="field"><label for="camp-desc">Descripción</label><textarea id="camp-desc" placeholder="Describe la amenaza, el objetivo y el tono de la campaña"></textarea></div>
+            <div class="field"><label for="camp-ambient">Ambientación</label><input id="camp-ambient" placeholder="Fantasía oscura, medieval, steampunk..." /></div>
+            <div class="field"><label for="camp-estado">Estado</label><select id="camp-estado"><option value="activa">activa</option><option value="pausada">pausada</option><option value="finalizada">finalizada</option></select></div>
+            <div class="field"><label for="camp-narrador">Narrador (id)</label><input id="camp-narrador" placeholder="2" /></div>
+            <div class="field"><label for="camp-max">Máx. jugadores</label><input id="camp-max" placeholder="6" type="number" /></div>
+            <div class="field"><label for="camp-sistema">Sistema de reglas</label><input id="camp-sistema" placeholder="D20" /></div>
+            <div class="actions"><button id="btn-create-camp">Crear campaña</button><button class="secondary" id="btn-cancel-camp" style="display:none">Cancelar edición</button><button class="secondary" id="btn-refresh-camps">Refrescar reino</button></div>
+          </div>
+
+          <div class="card">
+            <h3>Misiones de campaña</h3>
+            <p class="helper">Consulta o crea misiones para una campaña específica.</p>
+            <div class="field"><label for="list-missions-campaign">Campaign ID</label><input id="list-missions-campaign" placeholder="1" /></div>
+            <div class="actions"><button id="btn-list-missions">Listar misiones</button></div>
+            <div id="missions-list" class="list-wrap"></div>
+            <div class="footer-note">Consejo: usa el ID que aparece en la lista de campañas para navegar entre aventuras.</div>
+          </div>
+        </div>
+
+        <div class="column">
+          <div class="card">
+            <h3>Registrar misión</h3>
+            <p class="helper">Agrega un capítulo, objetivo o evento importante a una campaña existente.</p>
+            <div class="field"><label for="mission-campaign-id">Campaign ID</label><input id="mission-campaign-id" placeholder="1" /></div>
+            <div class="field"><label for="mission-title">Título</label><input id="mission-title" placeholder="El primer portal se abre" /></div>
+            <div class="field"><label for="mission-desc">Descripción</label><textarea id="mission-desc" placeholder="Detalla la escena, el reto o la narrativa de la misión"></textarea></div>
+            <div class="field"><label for="mission-orden">Orden</label><input id="mission-orden" placeholder="1" type="number" /></div>
+            <div class="field"><label for="mission-cap">Capítulo</label><input id="mission-cap" placeholder="Capítulo I" /></div>
+            <div class="field"><label for="mission-estado">Estado</label><select id="mission-estado"><option value="pendiente">pendiente</option><option value="en_progreso">en_progreso</option><option value="completada">completada</option></select></div>
+            <div class="actions"><button id="btn-create-mission">Crear misión</button><button class="secondary" id="btn-cancel-mission" style="display:none">Cancelar edición</button></div>
+          </div>
+
+          <div class="card">
+            <h3>Campañas registradas</h3>
+            <p class="helper">Cada campaña funciona como una línea argumental del reino.</p>
+            <div id="campaigns-list" class="list-wrap"></div>
+          </div>
+        </div>
+      </section>
     </div>
 
-    <div class="col">
-      <div class="card">
-        <h3>Lista de Campañas</h3>
-        <div id="campaigns-list"></div>
-        <button id="btn-refresh-camps">Actualizar lista</button>
-      </div>
-
-      <div class="card">
-        <h3>Misiones de Campaña</h3>
-        <input id="list-missions-campaign" placeholder="Campaign ID" />
-        <button id="btn-list-missions">Listar Misiones</button>
-        <div id="missions-list"></div>
-      </div>
-    </div>
-
-    <div class="clear"></div>
+    <div id="toast" class="toast" aria-live="polite"></div>
 
     <script src="app.js"></script>
   </body>
