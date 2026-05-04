@@ -4,4 +4,5 @@ backend/data.sqlite
 backend/test_campaign.json
 backend/test_mission.json
 backend/test_missions_list.json
+_docx_extracted/
 .DS_Store
